@@ -1,3 +1,6 @@
+[![Build Status](https://travis-ci.org/IgorPetkovic/hertz-fcm.svg?branch=master)](https://travis-ci.org/IgorPetkovic/hertz-fcm)
+[![Coverage Status](https://coveralls.io/repos/github/IgorPetkovic/hertz-fcm/badge.svg?branch=master)](https://coveralls.io/github/IgorPetkovic/hertz-fcm?branch=master)
+
 # Hertz::Fcm
 
 Welcome to your new gem! In this directory, you'll find the files you need to be able to package up your Ruby library into a gem. Put your Ruby code in the file `lib/hertz/fcm`. To experiment with that code, run `bin/console` for an interactive prompt.
