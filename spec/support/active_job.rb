@@ -1,0 +1,13 @@
+# frozen_string_literal: true
+
+require 'rspec/active_job'
+
+RSpec.configure do |config|
+  config.include(RSpec::ActiveJob)
+
+  # clean out the queue after each spec
+  config.after do
+    ActiveJob::Base.queue_adapter.enqueued_jobs = []
+    ActiveJob::Base.queue_adapter.performed_jobs = []
+  end
+end
