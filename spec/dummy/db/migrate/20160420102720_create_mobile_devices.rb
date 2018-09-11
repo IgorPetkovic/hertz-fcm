@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
-class CreateRegistrationIds < ActiveRecord::Migration[5.2]
+class CreateMobileDevices < ActiveRecord::Migration[5.2]
   def change
-    create_table :registration_ids do |t|
+    create_table :mobile_devices do |t|
       t.string :token
       t.references :user
     end

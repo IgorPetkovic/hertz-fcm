@@ -3,12 +3,11 @@
 class TestNotification < Hertz::Notification
   deliver_by :fcm
 
-  def options
-    {
-      notification: {
-        title: 'Test',
-        body: 'Test'
-      }
-    }
+  def body
+    'Test'
+  end
+
+  def title
+    'Test'
   end
 end

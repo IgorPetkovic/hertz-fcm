@@ -7,8 +7,9 @@ RSpec.describe Hertz::Fcm::NotificationDeliveryJob do
 
   let(:fcm_client) { instance_double('FCM') }
   let(:user) { build_stubbed(:user) }
-  let(:registration_id) { build_stubbed(:registration_id, user: user) }
-  let(:registration_ids) { [registration_id] }
+  let(:mobile_device) { build_stubbed(:mobile_device, user: user) }
+  let(:mobile_devices) { [mobile_device] }
+  let(:device_ids) { [mobile_device.token] }
   let(:notification) { build_stubbed(:test_notification) }
 
   before do
@@ -27,15 +28,15 @@ RSpec.describe Hertz::Fcm::NotificationDeliveryJob do
     allow(notification).to receive(:mark_delivered_with)
       .with(:fcm)
 
-    allow(user).to receive(:registration_ids)
-      .and_return(registration_ids)
+    allow(user).to receive(:mobile_devices)
+      .and_return(mobile_devices)
   end
 
   it 'delivers the notification via Firebase Cloud Messaging' do
     subject.perform(notification)
 
     expect(fcm_client).to have_received(:send)
-      .with(registration_ids, notification.options)
+      .with(device_ids, a_kind_of(Hash))
   end
 
   it 'marks the notification as delivered through fcm' do
@@ -46,10 +47,10 @@ RSpec.describe Hertz::Fcm::NotificationDeliveryJob do
       .once
   end
 
-  context 'when the receiver does not have registration ids' do
+  context 'when the receiver does not have mobile devices' do
     before do
-      allow(user).to receive(:registration_ids)
-        .and_return(nil)
+      allow(user).to receive(:mobile_devices)
+        .and_return(MobileDevice.none)
     end
 
     it 'does not deliver the notification' do

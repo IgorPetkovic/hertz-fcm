@@ -1,11 +1,10 @@
+# Hertz::Fcm
+
 [![Build Status](https://travis-ci.org/IgorPetkovic/hertz-fcm.svg?branch=master)](https://travis-ci.org/IgorPetkovic/hertz-fcm)
 [![Coverage Status](https://coveralls.io/repos/github/IgorPetkovic/hertz-fcm/badge.svg?branch=master)](https://coveralls.io/github/IgorPetkovic/hertz-fcm?branch=master)
 
-# Hertz::Fcm
-
-Welcome to your new gem! In this directory, you'll find the files you need to be able to package up your Ruby library into a gem. Put your Ruby code in the file `lib/hertz/fcm`. To experiment with that code, run `bin/console` for an interactive prompt.
-
-TODO: Delete this and the text above, and describe your gem
+This is a [Hertz](https://github.com/aldesantis/hertz) courier for sending 
+notifications to your users via [Firebase Cloud Messaging](https://firebase.google.com/).
 
 ## Installation
 
@@ -22,14 +21,77 @@ And then execute:
 Or install it yourself as:
 
     $ gem install hertz-fcm
+    
+Then, run the installer generator:
+
+```console
+$ rails g hertz:fcm:install
+```
+
+The courier will use ActiveJob to asynchronously deliver the text messages, so make sure that you're 
+executing background jobs with some adapter (`inline` will work, even though it's not recommended). 
+Jobs are pushed to the `default` queue.
 
 ## Usage
 
-TODO: Write usage instructions here
+You need to expose a `#device_ids` method in your receiver class:
+
+```ruby
+class User
+  include Hertz::Notifiable
+
+  def device_ids
+    mobile_devices.pluck(:token)
+  end
+end
+```
+
+The method should return an array of Firebase Cloud Messaging tokens (see the [FCM documentation](https://firebase.google.com/docs/cloud-messaging/android/client#sample-register) on how to acquire these).
+If `#device_ids` returns an empty value (i.e. `false`, `nil` or an empty array) at the time 
+the job is executed, the notification will not be delivered. This allows you to programmatically 
+enable/disable FCM notifications for a user:
+
+```ruby
+class User
+  include Hertz::Notifiable
+
+  def device_ids
+    mobile_devices.pluck(:token) if push_enabled?
+  end
+end
+```
+
+All you need to do in order to start delivering notifications via FCM is add `fcm` to the 
+notification's `#deliver_by` statement and provide `body` and `title` methods:
+
+```ruby
+class CommentNotification < Hertz::Notification
+  deliver_by :fcm
+
+  def body
+    'You received a new comment!'
+  end
+  
+  def title
+    'New comment'
+  end
+end
+```
+
+All `CommentNotification`s will now be delivered via FCM! :)
+
+**NOTE:** This courier uses the [deliveries API](https://github.com/aldesantis/hertz#tracking-delivery-status)
+to prevent double deliveries.
 
 ## Development
 
-After checking out the repo, run `bin/setup` to install dependencies. Then, run `rake spec` to run the tests. You can also run `bin/console` for an interactive prompt that will allow you to experiment.
+After checking out the repo, run `bundle install` to install dependencies.
+Then, to run the tests:
+```
+cp spec/dummy/config/database.example.yml spec/dummy/config/database.yml
+cd spec/dummy && RAILS_ENV=test bundle exec rake db:create db:schema:load && cd ../..
+bundle exec rspec
+```
 
 To install this gem onto your local machine, run `bundle exec rake install`. To release a new version, update the version number in `version.rb`, and then run `bundle exec rake release`, which will create a git tag for the version, push git commits and tags, and push the `.gem` file to [rubygems.org](https://rubygems.org).
 

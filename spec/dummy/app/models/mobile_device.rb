@@ -1,5 +1,5 @@
 # frozen_string_literal: true
 
-class RegistrationId < ApplicationRecord
+class MobileDevice < ApplicationRecord
   belongs_to :user
 end

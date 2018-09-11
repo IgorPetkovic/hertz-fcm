@@ -3,5 +3,9 @@
 class User < ApplicationRecord
   include Hertz::Notifiable
 
-  has_many :registration_ids
+  has_many :mobile_devices
+
+  def device_ids
+    mobile_devices.pluck(:token)
+  end
 end
