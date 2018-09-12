@@ -4,6 +4,7 @@ class PushNotificationSender
   attr_reader :notification
 
   REQUIRED_KEYS = %i[title body].freeze
+  OPTIONAL_KEYS = %i[click_action sound android_channel_id icon].freeze
 
   def initialize(notification)
     @notification = notification
@@ -30,9 +31,14 @@ class PushNotificationSender
     )
   end
 
+  def keys
+    REQUIRED_KEYS + OPTIONAL_KEYS.select { |key| notification.respond_to?(key) }
+  end
+
   def options
     {
-      notification: REQUIRED_KEYS.map { |key| [key, notification.send(key)] }.to_h
+      notification: keys.map { |key| [key, notification.send(key)] }.to_h,
+      data: notification.send(:data)
     }
   end
 end

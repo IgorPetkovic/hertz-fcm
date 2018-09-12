@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    hertz-fcm (1.0.0)
+    hertz-fcm (1.0.1)
       fcm (>= 0.0.2, < 1)
       hertz (~> 1.0)
       rails (>= 4.0.0, < 6)

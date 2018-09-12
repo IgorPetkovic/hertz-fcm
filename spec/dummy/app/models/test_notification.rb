@@ -10,4 +10,12 @@ class TestNotification < Hertz::Notification
   def title
     'Test'
   end
+
+  def click_action
+    'action'
+  end
+
+  def data
+    {}
+  end
 end
