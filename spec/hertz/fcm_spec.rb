@@ -8,14 +8,14 @@ RSpec.describe Hertz::Fcm do
   end
 
   describe '.configure' do
-    let(:server_key) { 'my_server_key' }
+    let(:project_id) { 'my_server_key' }
 
     it 'changes the configuration options' do
       expect do
         described_class.configure do |config|
-          config.server_key = server_key
+          config.project_id = project_id
         end
-      end.to change(described_class, :server_key).to(server_key)
+      end.to change(described_class, :project_id).to(project_id)
     end
   end
 

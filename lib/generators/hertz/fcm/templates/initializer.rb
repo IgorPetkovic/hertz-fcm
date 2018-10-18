@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 Hertz::Fcm.configure do |config|
-  # Your Firebase Cloud Messaging server key.
-  config.server_key = 'my_server_key'
+  # Your Firebase Cloud Messaging configuration.
+  config.project_id = 'project_id'
+  config.google_private_key = 'private_key'
+  config.google_client_email = 'email'
 end
