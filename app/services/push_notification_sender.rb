@@ -17,6 +17,8 @@ class PushNotificationSender
 
     notification.receiver.device_ids.each do |device_id|
       fcm_client.send(message: message(device_id))
+    rescue FirebaseCloudMessenger::Error
+      next
     end
 
     notification.mark_delivered_with(:fcm)
