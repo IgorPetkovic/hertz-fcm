@@ -21,7 +21,7 @@ Gem::Specification.new do |spec|
   spec.executables   = spec.files.grep(%r{^exe/}) { |f| File.basename(f) }
   spec.require_paths = ['lib']
 
-  spec.add_dependency 'fcm', '>= 0.0.2', '< 1'
+  spec.add_dependency 'firebase_cloud_messenger', '>= 0.4.0', '< 1'
   spec.add_dependency 'hertz', '~> 2.0'
   spec.add_dependency 'rails', '>= 4.0.0', '< 6'
 

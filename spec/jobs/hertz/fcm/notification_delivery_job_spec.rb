@@ -5,7 +5,6 @@ require 'rails_helper'
 RSpec.describe Hertz::Fcm::NotificationDeliveryJob do
   subject { described_class.new }
 
-  let(:fcm_client) { instance_double('FCM') }
   let(:user) { build_stubbed(:user) }
   let(:mobile_device) { build_stubbed(:mobile_device, user: user) }
   let(:mobile_devices) { [mobile_device] }
@@ -13,10 +12,7 @@ RSpec.describe Hertz::Fcm::NotificationDeliveryJob do
   let(:notification) { build_stubbed(:test_notification) }
 
   before do
-    allow(::FCM).to receive(:new)
-      .and_return(fcm_client)
-
-    allow(fcm_client).to receive(:send)
+    allow(FirebaseCloudMessenger).to receive(:send)
 
     allow(notification).to receive(:receiver)
       .and_return(user)
@@ -35,8 +31,10 @@ RSpec.describe Hertz::Fcm::NotificationDeliveryJob do
   it 'delivers the notification via Firebase Cloud Messaging' do
     subject.perform(notification)
 
-    expect(fcm_client).to have_received(:send)
-      .with(device_ids, a_kind_of(Hash))
+    expect(FirebaseCloudMessenger).to have_received(:send)
+      .with(a_kind_of(Hash))
+      .exactly(device_ids.count)
+      .times
   end
 
   it 'marks the notification as delivered through fcm' do
@@ -55,7 +53,7 @@ RSpec.describe Hertz::Fcm::NotificationDeliveryJob do
 
     it 'does not deliver the notification' do
       subject.perform(notification)
-      expect(fcm_client).not_to have_received(:send)
+      expect(FirebaseCloudMessenger).not_to have_received(:send)
     end
   end
 
@@ -68,7 +66,7 @@ RSpec.describe Hertz::Fcm::NotificationDeliveryJob do
 
     it 'does not deliver the notification' do
       subject.perform(notification)
-      expect(fcm_client).not_to have_received(:send)
+      expect(FirebaseCloudMessenger).not_to have_received(:send)
     end
   end
 end

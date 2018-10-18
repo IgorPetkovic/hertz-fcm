@@ -15,10 +15,9 @@ class PushNotificationSender
     return if notification.delivered_with?(:fcm)
     return unless REQUIRED_KEYS.all? { |key| notification.respond_to?(key) }
 
-    fcm_client.send(
-      notification.receiver.device_ids,
-      options
-    )
+    notification.receiver.device_ids.each do |device_id|
+      fcm_client.send(message: message(device_id))
+    end
 
     notification.mark_delivered_with(:fcm)
   end
@@ -26,19 +25,30 @@ class PushNotificationSender
   private
 
   def fcm_client
-    @fcm_client ||= ::FCM.new(
-      Hertz::Fcm.server_key
-    )
+    @fcm_client ||= FirebaseCloudMessenger
   end
 
   def keys
     REQUIRED_KEYS + OPTIONAL_KEYS.select { |key| notification.respond_to?(key) }
   end
 
-  def options
+  def message(token)
     {
-      notification: keys.map { |key| [key, notification.send(key)] }.to_h,
-      data: notification.send(:data)
+      data: keys.map { |key| [key, notification.send(key)] }.to_h
+                .merge!(notification.send(:data)),
+      apns: {
+        payload: {
+          aps: {
+            alert: {
+              title: notification.send(:title),
+              body: notification.send(:body)
+            },
+            sound: notification.send(:sound),
+            category: notification.send(:click_action)
+          }
+        }
+      },
+      token: token
     }
   end
 end

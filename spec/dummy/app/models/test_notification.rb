@@ -15,6 +15,10 @@ class TestNotification < Hertz::Notification
     'action'
   end
 
+  def sound
+    'sound'
+  end
+
   def data
     {}
   end
