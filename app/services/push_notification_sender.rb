@@ -48,7 +48,7 @@ class PushNotificationSender
   end
 
   def aps
-    if notification.send(:silent?)
+    if notification.respond_to?(:silent?) && notification.send(:silent?)
       return {
         category: notification.send(:click_action),
         'content-available' => 1
