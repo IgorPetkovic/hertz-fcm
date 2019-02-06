@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    hertz-fcm (1.1.3)
+    hertz-fcm (1.1.4)
       firebase_cloud_messenger (>= 0.4.0, < 1)
       hertz (~> 2.0)
       rails (>= 4.0.0, < 6)
