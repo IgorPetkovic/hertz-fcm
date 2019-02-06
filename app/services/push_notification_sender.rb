@@ -40,17 +40,28 @@ class PushNotificationSender
                 .merge!(notification.send(:data)),
       apns: {
         payload: {
-          aps: {
-            alert: {
-              title: notification.send(:title),
-              body: notification.send(:body)
-            },
-            sound: notification.send(:sound),
-            category: notification.send(:click_action)
-          }
+          aps: aps
         }
       },
       token: token
+    }
+  end
+
+  def aps
+    if notification.send(:silent?)
+      return {
+        category: notification.send(:click_action),
+        'content-available' => 1
+      }
+    end
+
+    {
+      alert: {
+        title: notification.send(:title),
+        body: notification.send(:body)
+      },
+      sound: notification.send(:sound),
+      category: notification.send(:click_action)
     }
   end
 end
