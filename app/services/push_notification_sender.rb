@@ -18,7 +18,8 @@ class PushNotificationSender
     notification.receiver.device_ids.each do |device_id|
       fcm_client.send(message: message(device_id))
     rescue FirebaseCloudMessenger::Error
-      next
+      job_class = Hertz::Fcm.deletion_job_class_name.safe_constantize
+      job_class.perform_later(device_id)
     end
 
     notification.mark_delivered_with(:fcm)

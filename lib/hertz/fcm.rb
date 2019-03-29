@@ -8,7 +8,8 @@ require 'hertz/fcm/version'
 
 module Hertz
   module Fcm
-    mattr_accessor :project_id, :google_private_key, :google_client_email
+    mattr_accessor :project_id, :google_private_key, :google_client_email,
+                   :deletion_job_class_name
 
     class << self
       def configure
